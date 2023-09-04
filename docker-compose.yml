@@ -1,0 +1,60 @@
+version: '3.4'
+networks:
+  api-network: 
+    driver: bridge
+  db-network:
+    driver: bridge
+volumes:
+  DBVolume:
+services:
+  gateaway:
+    container_name: gateaway
+    build:
+      context: .
+      dockerfile: MSEducation.Gateaway/MSEducation.Gateaway/Dockerfile  
+    ports:
+        -  8003:443
+    depends_on:
+    - DB
+    networks:
+     - api-network
+     - db-network
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - DOTNET_ENVIRONMENT=Development
+  customers:
+    container_name: customers
+    build:
+      context: .
+      dockerfile: MSEducation.Customer/Dockerfile
+    ports: 
+    - 8002:443
+    depends_on:
+    - DB
+    networks:
+     - db-network   
+     - api-network
+  orders:
+    container_name: orders
+    build:
+      context: .
+      dockerfile: MSEducation.Orders/Dockerfile
+    ports: 
+    - 8001:443
+    depends_on:
+    - DB
+    networks:
+     - db-network   
+     - api-network
+  DB:
+    container_name: DB
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+    - 1433
+    networks:
+    - db-network
+    volumes:
+    - DBVolume:/var/lib/gateawayDB/data
+    environment:
+    - ACCEPT_EULA=Y
+    - SA_PASSWORD=P@ssw0rd123.

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace MSEducation.Gateaway.Data
+namespace MSEducation.Auth.Data
 {
     public class ApplicationDbContext:IdentityDbContext
     {

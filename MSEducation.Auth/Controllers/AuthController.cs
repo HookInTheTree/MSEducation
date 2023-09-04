@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using MSEducation.AuthenticationManager.Models;
 using MSEducation.AuthenticationManager.Services;
 
-
-namespace MSEducation.Gateaway.Controllers
+namespace MSEducation.Auth.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

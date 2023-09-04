@@ -1,3 +1,4 @@
+using MSEducation.AuthenticationManager;
 
 namespace MSEducation.Customer
 {
@@ -7,10 +8,15 @@ namespace MSEducation.Customer
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+            var jwtSettings = builder.Configuration.GetSection("JWT")
+                .Get<JwtAuthenticationOptions>();
+
+            if (jwtSettings == null)
+                throw new ArgumentNullException("JWT section in appsettings.json wasnt' defined!");
+
+            builder.Services.AddCustomJWTAuthentication(jwtSettings);
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -26,7 +32,6 @@ namespace MSEducation.Customer
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

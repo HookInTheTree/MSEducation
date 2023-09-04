@@ -1,5 +1,9 @@
 
-using MSEducation.Gateaway.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MSEducation.AuthenticationManager.Services;
+using MSEducation.AuthenticationManager;
+using MSEducation.Auth.Data;
 
 namespace MSEducation.Auth
 {
@@ -21,6 +25,35 @@ namespace MSEducation.Auth
                 options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["Database"]);
             });
 
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.User.RequireUniqueEmail = false;
+                options.SignIn.RequireConfirmedEmail = false;
+
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 7;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+
+            builder.Services.Configure<JwtAuthenticationOptions>(builder.Configuration.GetSection("JWT"));
+            builder.Services.AddCustomJWTAuthentication(builder.Configuration.GetSection("JWT").Get<JwtAuthenticationOptions>());
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("JWT", policy =>
+                {
+                    policy.AuthenticationSchemes.Add("OAuth");
+                    policy.RequireAuthenticatedUser();
+                });
+            });
+            builder.Services.AddScoped<JWTService>();
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -28,12 +61,12 @@ namespace MSEducation.Auth
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.Services.GetService<ApplicationDbContext>()?.Database.Migrate();
             }
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

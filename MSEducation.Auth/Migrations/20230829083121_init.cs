@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MSEducation.Gateaway.Migrations
+namespace MSEducation.Auth.Migrations
 {
     /// <inheritdoc />
     public partial class init : Migration

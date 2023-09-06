@@ -61,8 +61,8 @@ namespace MSEducation.Auth
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                app.Services.GetService<ApplicationDbContext>()?.Database.Migrate();
             }
+            app.Services.GetService<ApplicationDbContext>()?.Database.Migrate();
 
             app.UseHttpsRedirection();
 

@@ -13,22 +13,26 @@ services:
       context: .
       dockerfile: MSEducation.Gateaway/MSEducation.Gateaway/Dockerfile  
     ports:
-        -  8003:443
+    - 8000:80
     depends_on:
     - DB
     networks:
      - api-network
-     - db-network
-    environment:
-    - ASPNETCORE_ENVIRONMENT=Development
-    - DOTNET_ENVIRONMENT=Development
+  authservice:
+    container_name: authservice
+    build:
+        context: .
+        dockerfile: MSEducation.Auth/Dockerfile
+    depends_on:
+    - DB
+    networks:
+    - api-network
+    - db-network
   customers:
     container_name: customers
     build:
       context: .
       dockerfile: MSEducation.Customer/Dockerfile
-    ports: 
-    - 8002:443
     depends_on:
     - DB
     networks:
@@ -39,8 +43,6 @@ services:
     build:
       context: .
       dockerfile: MSEducation.Orders/Dockerfile
-    ports: 
-    - 8001:443
     depends_on:
     - DB
     networks:
